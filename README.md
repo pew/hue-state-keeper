@@ -10,12 +10,10 @@ Set your user id and bridge ip in `app.py` and set your `dim` level.
 
 ```
 pip install requests
-while :;do python app.py;done
+python app.py
 ```
 
 # TODO
 
-* [ ] Get rid of this bash while loop
-* [ ] get bridge ip automatically
 * [ ] get user automatically by pressing the button
 * [ ] fix everything

@@ -1,9 +1,27 @@
 import requests
 import time
 import json
+import os.path
+import sys
 
-user = ""
-apiurl = "http://192.168.1.2/api/"+user
+try:
+    conf = os.path.exists('config.py')
+    import config
+except:
+    user = input('username: ')
+    getBri = input('set brightness: ')
+    getIp = requests.get("https://www.meethue.com/api/nupnp")
+    if getIp.status_code == 200:
+        ip = json.loads(getIp.text)[0]['internalipaddress']
+    else:
+        exit('Could not obtain IP address of bridge.')
+
+    f = open('config.py', 'w')
+    f.write("user = "+"\""+user+"\""+"\n"+"ip = "+"\""+ip+"\""+"\n"+"bri = "+getBri) # ?!?!?
+    f.close()
+    import config
+
+apiurl = "http://"+config.ip+"/api/"+config.user
 
 def savestate():
     lights = []
@@ -21,9 +39,17 @@ def deadlamp():
             deadLamp.append(dict)
     return deadLamp
 
-while deadlamp():
+while True:
+    savelamp = []
     for l in deadlamp():
         if l['reachable'] == False:
-            bri = {"bri":30}
-            setBri = requests.put(apiurl+"/lights/"+l['id']+"/state", json=bri)
+            dict = {'id': l['id'], 'reachable': l['reachable']}
+            savelamp.append(dict)
+            #print('dead:', savelamp)
             time.sleep(2)
+    for l in savelamp:
+        req = json.loads(requests.get(apiurl+"/lights/"+l['id']).text)
+        if req['state']['reachable'] == True:
+            #print('back on:', l['id'])
+            brightness = {"bri":config.bri}
+            setBri = requests.put(apiurl+"/lights/"+l['id']+"/state", json=brightness)
