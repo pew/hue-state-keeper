@@ -27,5 +27,3 @@ while deadlamp():
             bri = {"bri":30}
             setBri = requests.put(apiurl+"/lights/"+l['id']+"/state", json=bri)
             time.sleep(2)
-        else:
-            l.pop['id']
