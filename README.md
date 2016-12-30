@@ -9,6 +9,7 @@ Set your user id and bridge ip in `app.py` and set your `dim` level.
 # run
 
 ```
+pip install requests
 while :;do python app.py;done
 ```
 
